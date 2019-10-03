@@ -11,7 +11,10 @@ if (NOT ESY)
   message(FATAL_ERROR "Please check your esy installation")
 endif ()
 
-set(BINARY ${CMAKE_CURRENT_BINARY_DIR}/_build/install/default/bin/oeedger8r${CMAKE_EXECUTABLE_SUFFIX})
+# An artifact of using `esy` is that the generated binary is always
+# `main.exe` regardless of platform. We rename it for installation in
+# the package.
+set(BINARY ${CMAKE_CURRENT_BINARY_DIR}/_build/default/src/main.exe)
 add_custom_command(
   OUTPUT ${BINARY}
   COMMAND cmake -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
@@ -38,4 +41,6 @@ add_dependencies(edger8r oeedger8r_target)
 # Can't use `install(TARGETS)` on an imported executable, because it
 # causes CMake to crash. Instead, see `openenclave-config.cmake.in`
 # for the manual "export" of this target.
-install(PROGRAMS ${BINARY} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(PROGRAMS ${BINARY}
+  RENAME oeedger8r${CMAKE_EXECUTABLE_SUFFIX}
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
